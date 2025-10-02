@@ -3,6 +3,15 @@
 #include <fstream>
 #include <sstream>
 
+#define USAGE_MESSAGE \
+            "Usage: [mode] [input file] [output file]" "\n" \
+            "e.g. CodecBase64 --decode input_file.txt output_file.jpg" "\n\n" \
+            "Modes: " "\n" \
+            "    --code, -c    Codify the bytes with base64 encoding" "\n" \
+            "    --decode, -d  Decodify a base64 text file to bytes"  "\n" \
+            "Input: Path to the file with the string" "\n" \
+            "Output: Path where the output file will be created" "\n"
+
 #define ARGV_OPTIONS_COUNT 4
 #define ARGV_INPUT_FILE 2
 #define ARGV_OUTPUT_FILE 3
@@ -11,13 +20,8 @@ int main(int argc, char* argv[])
 {
     if (argc != ARGV_OPTIONS_COUNT)
     {
-        std::cout <<
-            "Usage: [mode] [input file] [output file]"
-            "\n"
-            "Mode's support: [-c --code, -d --decode]"
-            "\n"
-            "Input formats support: [.txt]"
-            << std::endl;
+        std::cout << USAGE_MESSAGE << std::endl;
+        return 1;
     }
 
     try
