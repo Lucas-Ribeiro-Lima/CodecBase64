@@ -67,11 +67,11 @@ int main(int argc, char *argv[]) {
     std::string input_str = oss.str();
 
     if (decode) {
-      std::vector<unsigned char> decoded_bytes = crypt::base64::decode(input_str.c_str(), input_str.length());
+      std::vector<unsigned char> decoded_bytes = codec::base64::decode(input_str.c_str(), input_str.length());
       outfile.write(reinterpret_cast<char *>(decoded_bytes.data()), decoded_bytes.size());
     } else {
       std::string encoded_str =
-          crypt::base64::encode(input_str.c_str(), input_str.length());
+          codec::base64::encode(input_str.c_str(), input_str.length());
       outfile.write(encoded_str.data(), encoded_str.size());
     }
 
