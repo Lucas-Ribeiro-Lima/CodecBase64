@@ -5,11 +5,27 @@
 #include <sstream>
 
 #define USAGE_MESSAGE \
-            "Usage: [mode] [input file] [output file]" "\n" \
-            "e.g. codex --decode input_file.txt output_file.jpg" "\n\n" \
+            "Usage: [mode] [options] [encoder/decoder] [input file] [output file]" "\n" \
+            "e.g. codex --decode base64 input_file.txt output_file.jpg" "\n" \
             "Modes: " "\n" \
-            "    -c  Codify the bytes with base64 encoding" "\n" \
-            "    -d  Decodify a base64 text file to bytes"  "\n" \
+            "    -c/--code   Codify the bytes with the specified encoding algorithm" "\n" \
+            "    -d/--decode Decodify the file with the specified encoding algorithm."  "\n" \
+            "                    Not every encoder permits a decoding, like the hash function sha256!" "\n" \
+            "Input: "  "\n" \
+            "    -f  File input mode (Default)."  "\n" \
+            "    -r  Recursive mode. " "\n" \
+            "                On encode the output file will concatenate the data with \\n." "\n" \
+            "                On decode recursive mode output files will be incremented named." "\n" \
+            "                Type auto-detected obrigatory on recursive." "\n" \
+            "    -s  String input mode. The string passed as input will be parsed as the data." "\n"\
+            "Output: " "\n" \
+            "    -t  Terminal output mode. The content will be redirect to stdout." "\n" \
+            "    -e  File type auto-detect mode" "\n" \
+            "                If none magic signature found, the fallback type is .bin." "\n" \
+            "Encoders:" "\n" \
+            "     * base64" "\n" \
+            "     * hex" "\n" \
+            "     * sha256" "\n" \
             "Input: Path to the file with the string" "\n" \
             "Output: Path where the output file will be created" "\n"
 
@@ -48,7 +64,7 @@ int main(int argc, char *argv[]) {
   }
 
   std::cout
-      << "codex\n"
+      << " =========== Codex =========== \n"
       << "Mode: " << ((mode[1] == '-') ? &mode[2] : &mode[1])
       << "\n" "Input file: " << argv[ARGV_INPUT_FILE]
       << "\n" "Saving file at: " << argv[ARGV_OUTPUT_FILE]
@@ -75,7 +91,7 @@ int main(int argc, char *argv[]) {
       outfile.write(encoded_str.data(), encoded_str.size());
     }
 
-    std::cout << "File saved" << std::endl;
+    std::cout << " ======== File saved ========= " << std::endl;
   } catch (std::exception &e) {
     std::cout << e.what() << std::endl;
   } catch (...) {
