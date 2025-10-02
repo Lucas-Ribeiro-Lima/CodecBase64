@@ -47,14 +47,14 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  try {
-    std::cout
-        << "CodecBase64\n"
-        << "Mode: " << ((mode[1] == '-') ? &mode[2] : &mode[1])
-        << "\n" "Input file: " << argv[ARGV_INPUT_FILE]
-        << "\n" "Saving file at: " << argv[ARGV_OUTPUT_FILE]
-        << std::endl;
+  std::cout
+      << "CodecBase64\n"
+      << "Mode: " << ((mode[1] == '-') ? &mode[2] : &mode[1])
+      << "\n" "Input file: " << argv[ARGV_INPUT_FILE]
+      << "\n" "Saving file at: " << argv[ARGV_OUTPUT_FILE]
+      << std::endl;
 
+  try {
     std::ifstream infile{argv[ARGV_INPUT_FILE], std::ios::binary};
     std::ofstream outfile{argv[ARGV_OUTPUT_FILE], std::ios::binary};
 
