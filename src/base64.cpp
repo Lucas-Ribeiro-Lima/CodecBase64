@@ -43,13 +43,13 @@ namespace crypt
             for (char i : out_buffer) decoded.push_back(i);
         }
 
-        std::string encode(const unsigned char* msg)
+        std::string encode(const char* msg, const size_t& size)
         {
             std::string encoded;
             unsigned char buffer[BASE64_BYTE_COUNT] = {0, 0, 0};
 
             size_t counter = 0;
-            for (size_t it = 0; msg[it] != STRING_NULL_TERMINATOR; it++)
+            for (size_t it = 0; it < size; it++)
             {
                 if (counter < 3)
                 {
@@ -72,7 +72,7 @@ namespace crypt
             return encoded;
         }
 
-        std::vector<unsigned char> decode(const char* encoded)
+        std::vector<unsigned char> decode(const char* encoded, const size_t& size)
         {
             unsigned char buffer[BASE64_CHAR_COUNT] = {0, 0, 0, 0};
             std::vector<unsigned char> decoded;
@@ -80,7 +80,7 @@ namespace crypt
             size_t counter = 0;
             size_t padding = 0;
 
-            for (size_t it = 0; encoded[it] != STRING_NULL_TERMINATOR;)
+            for (size_t it = 0; it < size;)
             {
                 if (counter < BASE64_CHAR_COUNT)
                 {
