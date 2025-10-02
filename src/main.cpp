@@ -6,7 +6,7 @@
 
 #define USAGE_MESSAGE \
             "Usage: [mode] [input file] [output file]" "\n" \
-            "e.g. CodecBase64 --decode input_file.txt output_file.jpg" "\n\n" \
+            "e.g. codex --decode input_file.txt output_file.jpg" "\n\n" \
             "Modes: " "\n" \
             "    -c  Codify the bytes with base64 encoding" "\n" \
             "    -d  Decodify a base64 text file to bytes"  "\n" \
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   }
 
   std::cout
-      << "CodecBase64\n"
+      << "codex\n"
       << "Mode: " << ((mode[1] == '-') ? &mode[2] : &mode[1])
       << "\n" "Input file: " << argv[ARGV_INPUT_FILE]
       << "\n" "Saving file at: " << argv[ARGV_OUTPUT_FILE]
