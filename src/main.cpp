@@ -8,7 +8,7 @@
             "Usage: [mode] [input file] [output file]" "\n" \
             "e.g. CodecBase64 --decode input_file.txt output_file.jpg" "\n\n" \
             "Modes: " "\n" \
-            "    -c    Codify the bytes with base64 encoding" "\n" \
+            "    -c  Codify the bytes with base64 encoding" "\n" \
             "    -d  Decodify a base64 text file to bytes"  "\n" \
             "Input: Path to the file with the string" "\n" \
             "Output: Path where the output file will be created" "\n"
