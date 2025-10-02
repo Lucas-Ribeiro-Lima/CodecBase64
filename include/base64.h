@@ -8,9 +8,11 @@
 #ifndef CODECBASE64_BASE64_H
 #define CODECBASE64_BASE64_H
 
+#define BASE64_CHARS_STRING "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
 namespace crypt {
   namespace base64 {
-    static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    static const std::string base64_chars = BASE64_CHARS_STRING;
 
     void _encode_block(const unsigned char *buffer, std::string &encoded);
 
@@ -18,7 +20,7 @@ namespace crypt {
 
     std::string encode(const unsigned char *msg);
 
-    std::vector<unsigned char> decode(const std::string &encoded);
+    std::vector<unsigned char> decode(const char* encoded);
 
     std::string bytes_to_string(const std::vector<unsigned char> &bytes);
   }

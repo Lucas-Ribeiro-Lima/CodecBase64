@@ -3,32 +3,44 @@
 #include <fstream>
 #include <sstream>
 
-int main(int argc, char *argv[]) {
-  if (argc < 4) {
-    std::cout \
-    << "Usage: [mode] [input file] [output file]" << "\n" \
-    << "Mode's support: [-c --code, -d --decode]" << "\n" \
-    << "Input formats support: [.txt]" << std::endl;
-  }
+#define ARGV_OPTIONS_COUNT 4
+#define ARGV_INPUT_FILE 2
+#define ARGV_OUTPUT_FILE 3
 
-  try {
-    std::ifstream infile{ argv[2], std::ios::binary };
-    std::ofstream outfile{ argv[3], std::ios::binary };
-
-    if (!infile.is_open() || !outfile.is_open()) {
-      throw std::runtime_error("Failed to open input/output file");
+int main(int argc, char* argv[])
+{
+    if (argc != ARGV_OPTIONS_COUNT)
+    {
+        std::cout <<
+            "Usage: [mode] [input file] [output file]"
+            "\n"
+            "Mode's support: [-c --code, -d --decode]"
+            "\n"
+            "Input formats support: [.txt]"
+            << std::endl;
     }
 
-    std::ostringstream oss;
-    oss << infile.rdbuf();
-    std::string input_str = oss.str();
+    try
+    {
+        std::ifstream infile{argv[ARGV_INPUT_FILE], std::ios::binary};
+        std::ofstream outfile{argv[ARGV_OUTPUT_FILE], std::ios::binary};
 
-    std::vector<unsigned char> decoded_bytes = crypt::base64::decode(input_str);
-    outfile.write(reinterpret_cast<char*>(decoded_bytes.data()), decoded_bytes.size());
+        if (!infile.is_open() || !outfile.is_open())
+        {
+            throw std::runtime_error("Failed to open input/output file");
+        }
 
-  } catch (std::exception &e) {
-    std::cout << e.what() << std::endl;
-  }
+        std::ostringstream oss;
+        oss << infile.rdbuf();
+        std::string input_str = oss.str();
 
-  return 0;
+        std::vector<unsigned char> decoded_bytes = crypt::base64::decode(input_str.c_str());
+        outfile.write(reinterpret_cast<char*>(decoded_bytes.data()), decoded_bytes.size());
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+
+    return 0;
 }
