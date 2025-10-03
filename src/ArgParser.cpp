@@ -4,6 +4,7 @@
 
 #include "../include/ArgParser.h"
 #include <iostream>
+#include <unordered_map>
 
 #define USAGE_MESSAGE \
 "Usage: [mode] [options] [encoder/decoder] [input file] [output file]" "\n" \
@@ -42,34 +43,44 @@
 
 #define ERRORS_MASK 0x80
 
-ArgParser::ArgParser(int argc, char *argv[]):
- input_file(argv[argc - 2]), output_file(argv[argc - 1])
-{
+static std::unordered_map<char, unsigned char> options_map{
+  {'c', ENCODE_MODE_MASK},
+  {'d', DECODE_MODE_MASK},
+  {'s', STRING_INPUT_MASK},
+  {'t', TERMINAL_OUTPUT_MASK},
+  {'e', AUTO_DETECT_MASK},
+  {'r', RECURSIVE_MASK}
+};
+
+ArgParser::ArgParser(int argc, char *argv[]) : input_file(argv[argc - 2]), output_file(argv[argc - 1]) {
   if (argc < ARGV_MIN_COUNT) {
     std::cout
-      << "Invalid numbers of arguments: " << argc << "\n"
-      << USAGE_MESSAGE << std::endl;
+        << "Invalid numbers of arguments: " << argc << "\n"
+        << USAGE_MESSAGE << std::endl;
     options |= ERRORS_MASK;
     return;
   }
 
-  char *mode_str = argv[ARGV_MODE_OPTION];
-  if (mode_str[0] == '-' && mode_str[1] == 'c') options |= ENCODE_MODE_MASK;
-  else if (mode_str[0] == '-' && mode_str[1] == 'd') options |= DECODE_MODE_MASK;
-
-  if (mode_str[0] == '-' && mode_str[1] == '-') {
-    if (strcmp(&mode_str[2], "decode") == 0) {
-      options |= DECODE_MODE_MASK;
-    }
-    if (strcmp(&mode_str[2], "encode") == 0) {
-      options |= ENCODE_MODE_MASK;
+  for (size_t it = 1; it < argc - 3; it++) {
+    std::string _arg = argv[it];
+    for (auto& c : _arg) {
+      if (c == '-') continue;
+      if (options_map.contains(c)) {
+        options |= options_map[c];
+      } else {
+        std::cout << "Invalid options: " <<  c << ", ";
+        options |= ERRORS_MASK;
+      }
     }
   }
 
-  if (!(options & DECODE_MODE_MASK ^ options & ENCODE_MODE_MASK)) {
-    std::cout << "Invalid mode: " << mode_str << std::endl;
-    std::cout << USAGE_MESSAGE << std::endl;
+  if (options & DECODE_MODE_MASK && options & ENCODE_MODE_MASK) {
+    std::cout << "Encode and decoded options simultaneously selected." << std::endl;
     options |= ERRORS_MASK;
+  }
+
+  if (hasError()) {
+    std::cout << USAGE_MESSAGE << std::endl;
     return;
   }
 }
@@ -83,7 +94,6 @@ const char *ArgParser::getOutputFile() const {
 }
 
 bool ArgParser::isDecode() const {
-  if (options & ENCODE_MODE_MASK && options & DECODE_MODE_MASK) throw std::invalid_argument("Duplicate mode");
   return options & DECODE_MODE_MASK;
 }
 
@@ -103,7 +113,6 @@ bool ArgParser::isTerminalOutput() const {
   return options & TERMINAL_OUTPUT_MASK;
 }
 
-bool ArgParser::hasError() {
+bool ArgParser::hasError() const {
   return options & ERRORS_MASK;
 }
-

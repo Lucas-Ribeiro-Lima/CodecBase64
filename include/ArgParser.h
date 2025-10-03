@@ -5,7 +5,7 @@
 #ifndef CODEX_ARGPARSER_H
 #define CODEX_ARGPARSER_H
 
-enum Encoders {
+enum  Encoders {
   Base64 = 1,
   HEX = 2,
   SHA256 = 3
@@ -26,7 +26,7 @@ public:
   [[nodiscard]] Encoders getEncoder() const;
   const char* getInputFile() const;
   const char* getOutputFile() const;
-  bool hasError();
+  bool hasError() const;
 };
 
 
