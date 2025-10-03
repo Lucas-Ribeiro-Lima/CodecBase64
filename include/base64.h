@@ -2,8 +2,8 @@
 // Created by lucas.lima on 01/10/2025.
 //
 
-#ifndef CODECBASE64_BASE64_H
-#define CODECBASE64_BASE64_H
+#ifndef CODEX_BASE64_H
+#define CODEX_BASE64_H
 
 #include <string>
 #include <vector>
@@ -18,4 +18,4 @@ namespace codec::base64
 }
 
 
-#endif //CODECBASE64_BASE64_H
+#endif //CODEX_BASE64_H
