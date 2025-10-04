@@ -6,15 +6,16 @@
 #define CODEX_ARGPARSER_H
 
 enum  Encoders {
-  Base64 = 1,
-  HEX = 2,
-  SHA256 = 3
+  Base64,
+  HEX,
+  SHA256
 };
 
 class ArgParser {
   const char* input_file = nullptr;
   const char* output_file = nullptr;
   unsigned char options = 0;
+  Encoders encoder;
 
 public:
   ArgParser(int argc, char *argv[]);

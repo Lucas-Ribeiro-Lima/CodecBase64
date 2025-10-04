@@ -23,12 +23,13 @@
 "    -t  Terminal output mode. The content will be redirect to stdout." "\n" \
 "    -e  File type auto-detect mode" "\n" \
 "                If none magic signature found, the fallback type is .bin." "\n" \
-"Encoders:" "\n" \
+"Input: Path to the file with the string" "\n" \
+"Output: Path where the output file will be created" "\n" \
+"TO DO" "\n" \
+"Encoders: " "\n" \
 "     * base64" "\n" \
 "     * hex" "\n" \
 "     * sha256" "\n" \
-"Input: Path to the file with the string" "\n" \
-"Output: Path where the output file will be created" "\n"
 
 #define ARGV_MIN_COUNT 5
 #define ARGV_MODE_OPTION 1
@@ -43,76 +44,117 @@
 
 #define ERRORS_MASK 0x80
 
-static std::unordered_map<char, unsigned char> options_map{
-  {'c', ENCODE_MODE_MASK},
-  {'d', DECODE_MODE_MASK},
-  {'s', STRING_INPUT_MASK},
-  {'t', TERMINAL_OUTPUT_MASK},
-  {'e', AUTO_DETECT_MASK},
-  {'r', RECURSIVE_MASK}
+enum options_enum
+{
+    ENCODE = 'c',
+    DECODE = 'd',
+    STRING_INPUT = 's',
+    TERMINAL_OUTPUT = 't',
+    AUTO_DETECT = 'e',
+    RECURSIVE = 'r',
 };
 
-ArgParser::ArgParser(int argc, char *argv[]) : input_file(argv[argc - 2]), output_file(argv[argc - 1]) {
-  if (argc < ARGV_MIN_COUNT) {
-    std::cout
-        << "Invalid numbers of arguments: " << argc << "\n"
-        << USAGE_MESSAGE << std::endl;
-    options |= ERRORS_MASK;
-    return;
-  }
+static std::unordered_map<char, unsigned char> options_map{
+    {ENCODE, ENCODE_MODE_MASK},
+    {DECODE, DECODE_MODE_MASK},
+    {STRING_INPUT, STRING_INPUT_MASK},
+    {TERMINAL_OUTPUT, TERMINAL_OUTPUT_MASK},
+    {AUTO_DETECT, AUTO_DETECT_MASK},
+    {RECURSIVE, RECURSIVE_MASK}
+};
 
-  for (size_t it = 1; it < argc - 3; it++) {
-    std::string _arg = argv[it];
-    for (auto& c : _arg) {
-      if (c == '-') continue;
-      if (options_map.contains(c)) {
-        options |= options_map[c];
-      } else {
-        std::cout << "Invalid options: " <<  c << ", ";
+ArgParser::ArgParser(int argc, char* argv[])
+{
+    if (argc < ARGV_MIN_COUNT)
+    {
+        std::cout
+            << "Invalid numbers of arguments: " << argc << "\n"
+            << USAGE_MESSAGE << std::endl;
         options |= ERRORS_MASK;
-      }
+        return;
     }
-  }
 
-  if (options & DECODE_MODE_MASK && options & ENCODE_MODE_MASK) {
-    std::cout << "Encode and decoded options simultaneously selected." << std::endl;
-    options |= ERRORS_MASK;
-  }
+    input_file = argv[argc - 2];
+    output_file = argv[argc - 1];
 
-  if (hasError()) {
-    std::cout << USAGE_MESSAGE << std::endl;
-    return;
-  }
+    std::string encoding_algorithm = argv[argc - 3];
+    if (encoding_algorithm == "base64") encoder = Encoders::Base64;
+    else if (encoding_algorithm == "hex") encoder = Encoders::HEX;
+    else if (encoding_algorithm == "sha256") encoder = Encoders::SHA256;
+
+    for (size_t it = 1; it < argc - 3; it++)
+    {
+        std::string _arg = argv[it];
+        for (auto& c : _arg)
+        {
+            if (c == '-') continue;
+            if (options_map.contains(c))
+            {
+                options |= options_map[c];
+            }
+            else
+            {
+                std::cout << "Invalid options: " << c << ", ";
+                options |= ERRORS_MASK;
+            }
+        }
+    }
+
+    if (options & DECODE_MODE_MASK && options & ENCODE_MODE_MASK)
+    {
+        std::cout << "Encode and decoded options simultaneously selected." << std::endl;
+        options |= ERRORS_MASK;
+    }
+
+    if (hasError())
+    {
+        std::cout << USAGE_MESSAGE << std::endl;
+        return;
+    }
 }
 
-const char *ArgParser::getInputFile() const {
-  return input_file;
+const char* ArgParser::getInputFile() const
+{
+    return input_file;
 }
 
-const char *ArgParser::getOutputFile() const {
-  return output_file;
+const char* ArgParser::getOutputFile() const
+{
+    return output_file;
 }
 
-bool ArgParser::isDecode() const {
-  return options & DECODE_MODE_MASK;
+Encoders ArgParser::getEncoder() const
+{
+    return encoder;
 }
 
-bool ArgParser::isAutoDetect() const {
-  return options & AUTO_DETECT_MASK;
+
+bool ArgParser::isDecode() const
+{
+    return options & DECODE_MODE_MASK;
 }
 
-bool ArgParser::isRecursive() const {
-  return options & RECURSIVE_MASK;
+bool ArgParser::isAutoDetect() const
+{
+    return options & AUTO_DETECT_MASK;
 }
 
-bool ArgParser::isStringInput() const {
-  return options & STRING_INPUT_MASK;
+bool ArgParser::isRecursive() const
+{
+    return options & RECURSIVE_MASK;
 }
 
-bool ArgParser::isTerminalOutput() const {
-  return options & TERMINAL_OUTPUT_MASK;
+bool ArgParser::isStringInput() const
+{
+    return options & STRING_INPUT_MASK;
 }
 
-bool ArgParser::hasError() const {
-  return options & ERRORS_MASK;
+bool ArgParser::isTerminalOutput() const
+{
+    return options & TERMINAL_OUTPUT_MASK;
+}
+
+bool ArgParser::hasError() const
+{
+    return options & ERRORS_MASK;
 }

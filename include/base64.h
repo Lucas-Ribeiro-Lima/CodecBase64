@@ -14,7 +14,7 @@ namespace codec::base64
 
     std::vector<unsigned char> decode(const char* encoded, const size_t& size);
 
-    std::string bytes_to_string(const std::vector<unsigned char>& bytes);
+    [[deprecated]] std::string bytes_to_string(const std::vector<unsigned char>& bytes);
 }
 
 

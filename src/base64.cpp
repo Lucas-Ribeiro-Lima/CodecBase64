@@ -105,7 +105,7 @@ namespace codec::base64
         return decoded;
     }
 
-    std::string bytes_to_string(const std::vector<unsigned char>& bytes)
+    [[deprecated]] std::string bytes_to_string(const std::vector<unsigned char>& bytes)
     {
         std::string res;
         for (auto& c : bytes) res += c;
