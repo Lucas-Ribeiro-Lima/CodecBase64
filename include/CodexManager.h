@@ -18,7 +18,8 @@ class CodexManager
     void encode();
     void decode();
     [[nodiscard]] std::string readData() const;
-    void writeData(const char* bytes) const;
+    [[nodiscard]] static std::string detectExtension(const char* bytes) ;
+    void writeData(const char* bytes, size_t size) const;
 public:
     explicit CodexManager(ArgParser& o);
     void process();

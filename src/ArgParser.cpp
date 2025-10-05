@@ -10,7 +10,7 @@
 "Usage: [mode] [options] [encoder/decoder] [input file] [output file]" "\n" \
 "e.g. codex --decode base64 input_file.txt output_file.jpg" "\n" \
 "Modes: " "\n" \
-"    -c/--encode   Codify the bytes with the specified encoding algorithm" "\n" \
+"    -e/--encode   Codify the bytes with the specified encoding algorithm" "\n" \
 "    -d/--decode Decodify the file with the specified encoding algorithm."  "\n" \
 "                    Not every encoder permits a decoding, like the hash function sha256!" "\n" \
 "Input: "  "\n" \
@@ -21,8 +21,8 @@
 "    -s  String input mode. The string passed as input will be parsed as the data." "\n"\
 "Output: " "\n" \
 "    -t  Terminal output mode. The content will be redirect to stdout." "\n" \
-"    -e  File type auto-detect mode" "\n" \
-"                If none magic signature found, the fallback type is .bin." "\n" \
+"    -x  File type auto-detect mode" "\n" \
+"                If none magic signature found, the fallback type is .txt." "\n" \
 "Input: Path to the file with the string" "\n" \
 "Output: Path where the output file will be created" "\n" \
 "TO DO" "\n" \
@@ -46,11 +46,11 @@
 
 enum options_enum
 {
-    ENCODE = 'c',
+    ENCODE = 'e',
     DECODE = 'd',
     STRING_INPUT = 's',
     TERMINAL_OUTPUT = 't',
-    AUTO_DETECT = 'e',
+    AUTO_DETECT = 'x',
     RECURSIVE = 'r',
 };
 

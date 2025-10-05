@@ -6,13 +6,16 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <unordered_set>
 #include <base64.h>
 
-CodexManager::CodexManager(ArgParser& o): _argParser(o) {}
+CodexManager::CodexManager(ArgParser& o) : _argParser(o)
+{
+}
 
 void CodexManager::process()
 {
-    if (_argParser.isDecode())  decode();
+    if (_argParser.isDecode()) decode();
     else encode();
 }
 
@@ -20,14 +23,14 @@ void CodexManager::encode()
 {
     std::string input_str = readData();
     encoded_str = codec::base64::encode(input_str.c_str(), input_str.size());
-    writeData(encoded_str.c_str());
+    writeData(encoded_str.c_str(), encoded_str.size());
 }
 
 void CodexManager::decode()
 {
     std::string input_str = readData();
     decoded_bytes = codec::base64::decode(input_str.c_str(), input_str.size());
-    writeData(reinterpret_cast<char*>(decoded_bytes.data()));
+    writeData(reinterpret_cast<char*>(decoded_bytes.data()), decoded_bytes.size());
 }
 
 std::string CodexManager::readData() const
@@ -37,7 +40,8 @@ std::string CodexManager::readData() const
     {
         input_str = _argParser.getInputFile();
         std::cout << "Input string: " << input_str << std::endl;
-    } else
+    }
+    else
     {
         std::ifstream ifs{_argParser.getInputFile(), std::ios::binary};
         if (!ifs.is_open()) throw std::runtime_error("Input file not found");
@@ -51,7 +55,7 @@ std::string CodexManager::readData() const
     return input_str;
 }
 
-void CodexManager::writeData(const char* bytes) const
+void CodexManager::writeData(const char* bytes, size_t size) const
 {
     if (_argParser.isTerminalOutput())
     {
@@ -59,16 +63,27 @@ void CodexManager::writeData(const char* bytes) const
     }
     else
     {
-        std::ofstream output_file{ _argParser.getOutputFile(), std::ios::binary };
+        std::string outputName = _argParser.getOutputFile();
+        if (_argParser.isAutoDetect()) outputName += detectExtension(bytes);
+
+        std::ofstream output_file{outputName, std::ios::binary};
         if (!output_file.is_open()) throw std::runtime_error("Could not open output file.");
 
-        std::cout << "Output file: " << _argParser.getOutputFile() << std::endl;
-
-        output_file << bytes;
+        std::cout << "Output file: " << outputName << std::endl;
+        output_file.write(bytes, size);
     };
 
     std::cout << " ======== File saved ========= " << std::endl;
 }
 
+static std::unordered_set<std::string> well_know_extensions{
+    "pdf", "csv", "jpg", "png", "bmp", "tiff ", "ico", "doc", "mp3", "mp4"
+};
 
-
+std::string CodexManager::detectExtension(const char* bytes)
+{
+    std::string extension = ".";
+    for (size_t i = 1; i < 4; i++) extension += std::tolower(bytes[i]);
+    if (well_know_extensions.contains(&extension[1])) return extension;
+    return ".txt";
+}
