@@ -39,14 +39,11 @@ std::string CodexManager::readData() const
     if (_argParser.isStringInput())
     {
         input_str = _argParser.getInputFile();
-        std::cout << "Input string: " << input_str << std::endl;
     }
     else
     {
         std::ifstream ifs{_argParser.getInputFile(), std::ios::binary};
         if (!ifs.is_open()) throw std::runtime_error("Input file not found");
-
-        std::cout << "Input file: " << _argParser.getInputFile() << std::endl;
         std::stringstream ss;
         ss << ifs.rdbuf();
         return ss.str();
@@ -59,10 +56,16 @@ void CodexManager::writeData(const char* bytes, size_t size) const
 {
     if (_argParser.isTerminalOutput())
     {
-        std::cout << "Output string: " << bytes << std::endl;
+        std::cout.write(bytes, size);
     }
     else
     {
+        std::cout
+            << " =========== Codex =========== \n"
+            << "Mode: " << (_argParser.isDecode() ? "Decode" : "Encode")
+            << "Input: " << _argParser.getInputFile()
+            << std::endl;
+
         std::string outputName = _argParser.getOutputFile();
         if (_argParser.isAutoDetect()) outputName += detectExtension(bytes);
 
@@ -71,9 +74,9 @@ void CodexManager::writeData(const char* bytes, size_t size) const
 
         std::cout << "Output file: " << outputName << std::endl;
         output_file.write(bytes, size);
-    };
 
-    std::cout << " ======== File saved ========= " << std::endl;
+        std::cout << " ======== File saved ========= " << std::endl;
+    };
 }
 
 static std::unordered_set<std::string> well_know_extensions{
