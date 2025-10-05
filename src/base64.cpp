@@ -3,6 +3,7 @@
 //
 
 #include <base64.h>
+#include <array>
 
 #define BASE64_CHAR_COUNT 4
 #define BASE64_BYTE_COUNT 3
@@ -17,6 +18,19 @@
 namespace codec::base64
 {
     static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+    static constexpr std::array<char, 256> base64_lut = [] {
+      std::array<char, 256> lut{};
+      lut.fill(-1);
+
+      for (int i = 'A'; i <= 'Z'; ++i) lut[i] = i - 'A';           // 0–25
+      for (int i = 'a'; i <= 'z'; ++i) lut[i] = i - 'a' + 26;      // 26–51
+      for (int i = '0'; i <= '9'; ++i) lut[i] = i - '0' + 52;      // 52–61
+      lut['+'] = 62;
+      lut['/'] = 63;
+
+      return lut;
+    }();
 
     void _encode_block(const unsigned char* buffer, std::string& encoded)
     {
@@ -84,7 +98,7 @@ namespace codec::base64
         {
             if (counter < BASE64_CHAR_COUNT)
             {
-                char pos = base64_chars.find(encoded[it]);
+                char pos = base64_lut[encoded[it]];
                 if (pos != std::string::npos) buffer[counter++] = pos;
                 else
                 {
