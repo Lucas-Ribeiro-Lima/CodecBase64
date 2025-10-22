@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     CodexManager codex(options);
     try
     {
-        codex.process();
+        codex.execute();
     }
     catch (...)
     {

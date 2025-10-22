@@ -15,14 +15,18 @@ class CodexManager
     std::string encoded_str;
     std::vector<unsigned char> decoded_bytes;
 
-    void encode();
-    void decode();
+    void encode(std::string &data);
+    void decode(std::string &data);
     [[nodiscard]] std::string readData() const;
-    [[nodiscard]] static std::string detectExtension(const char* bytes) ;
-    void writeData(const char* bytes, size_t size) const;
+    [[nodiscard]] static std::string detectExtension(const char *bytes);
+
+  void writeData(const char *bytes, size_t size) const;
+  void process();
+  void log(const char *msg, bool isData = false);
+
 public:
-    explicit CodexManager(ArgParser& o);
-    void process();
+  explicit CodexManager(ArgParser &o);
+  void execute();
 };
 
 

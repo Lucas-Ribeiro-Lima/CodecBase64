@@ -158,3 +158,11 @@ bool ArgParser::hasError() const
 {
     return options & ERRORS_MASK;
 }
+
+void ArgParser::setInputFile(const char *file) {
+  input_file = file;
+}
+
+void ArgParser::setOutputFile(const char *file) {
+  output_file = file;
+}

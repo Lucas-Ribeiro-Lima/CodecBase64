@@ -25,6 +25,8 @@ public:
   [[nodiscard]] bool isDecode() const;
   [[nodiscard]] bool isAutoDetect() const;
   [[nodiscard]] Encoders getEncoder() const;
+  void setInputFile(const char * file);
+  void setOutputFile(const char * file);
   const char* getInputFile() const;
   const char* getOutputFile() const;
   bool hasError() const;
