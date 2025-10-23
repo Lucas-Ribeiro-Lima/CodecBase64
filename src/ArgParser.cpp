@@ -21,7 +21,7 @@
 "    -s  String input mode. The string passed as input will be parsed as the data." "\n"\
 "Output: " "\n" \
 "    -t  Terminal output mode. The content will be redirect to stdout." "\n" \
-"    -x  File type auto-detect mode" "\n" \
+"    -x  Disable the file type auto-detect mode" "\n" \
 "                If none magic signature found, the fallback type is .txt." "\n" \
 "Input: Path to the file with the string" "\n" \
 "Output: Path where the output file will be created" "\n" \
@@ -81,6 +81,7 @@ ArgParser::ArgParser(int argc, char* argv[])
     if (encoding_algorithm == "base64") encoder = Encoders::Base64;
     else if (encoding_algorithm == "hex") encoder = Encoders::HEX;
     else if (encoding_algorithm == "sha256") encoder = Encoders::SHA256;
+    else throw std::invalid_argument("Invalid encoding algorithm");
 
     for (size_t it = 1; it < argc - 3; it++)
     {
@@ -134,7 +135,7 @@ bool ArgParser::isDecode() const
     return options & DECODE_MODE_MASK;
 }
 
-bool ArgParser::isAutoDetect() const
+bool ArgParser::isAutoDetectDisabled() const
 {
     return options & AUTO_DETECT_MASK;
 }

@@ -23,7 +23,7 @@ public:
   [[nodiscard]] bool isStringInput() const;
   [[nodiscard]] bool isTerminalOutput() const;
   [[nodiscard]] bool isDecode() const;
-  [[nodiscard]] bool isAutoDetect() const;
+  [[nodiscard]] bool isAutoDetectDisabled() const;
   [[nodiscard]] Encoders getEncoder() const;
   void setInputFile(const char * file);
   void setOutputFile(const char * file);

@@ -8,7 +8,22 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_set>
+#include <unordered_map>
 #include <base64.h>
+#include <hex.h>
+
+template<typename T, typename... Args>
+using algorithms_map = std::unordered_map<Encoders, T(*)(Args...)>;
+
+static const algorithms_map<std::string, const char *, const size_t &> algorithms_map_encoders = {
+  {Base64, codec::base64::encode},
+  {HEX, codec::hex::encode},
+};
+
+static const algorithms_map<std::vector<unsigned char>, const char *, const size_t &> algorithms_map_decoders = {
+  {Base64, codec::base64::decode},
+  {HEX, codec::hex::decode},
+};
 
 CodexManager::CodexManager(ArgParser &o) : _argParser(o) {
 }
@@ -44,13 +59,18 @@ void CodexManager::execute() {
         }
 
         process();
-
       }
     }
-    if (!_argParser.isTerminalOutput()) std::cout << " ======== Files saved ========= \n" << std::endl;
+    if (!_argParser.isTerminalOutput()) std::cout << " ======== Files saved ========= \n";
   } else {
-    std::cout << "Processing: " << _argParser.getInputFile();
+    if (!_argParser.isTerminalOutput()) {
+      std::cout << "Processing: " << _argParser.getInputFile() << "\n";
+      std::cout << "Output file: " << _argParser.getOutputFile() << std::endl;
+    }
+
     process();
+
+    if (!_argParser.isTerminalOutput()) std::cout << " ======== File saved ========= \n";
   }
 }
 
@@ -62,12 +82,12 @@ void CodexManager::process() {
 
 
 void CodexManager::encode(std::string &data) {
-  encoded_str = codec::base64::encode(data.c_str(), data.size());
+  encoded_str = algorithms_map_encoders.at(_argParser.getEncoder())(data.c_str(), data.size());
   writeData(encoded_str.c_str(), encoded_str.size());
 }
 
 void CodexManager::decode(std::string &data) {
-  decoded_bytes = codec::base64::decode(data.c_str(), data.size());
+  decoded_bytes = algorithms_map_decoders.at(_argParser.getEncoder())(data.c_str(), data.size());
   writeData(reinterpret_cast<char *>(decoded_bytes.data()), decoded_bytes.size());
 }
 
@@ -91,7 +111,7 @@ void CodexManager::writeData(const char *bytes, size_t size) const {
     std::cout.write(bytes, size) << "\n";
   } else {
     std::string outputName = _argParser.getOutputFile();
-    if (_argParser.isAutoDetect()) outputName += detectExtension(bytes);
+    if (!_argParser.isAutoDetectDisabled()) outputName += detectExtension(bytes);
 
     std::ofstream output_file{outputName, std::ios::binary};
     if (!output_file.is_open()) throw std::runtime_error("Could not open output file.");
