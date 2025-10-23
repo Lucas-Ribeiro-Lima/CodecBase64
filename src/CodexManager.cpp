@@ -116,7 +116,7 @@ void CodexManager::writeData(const char *bytes, size_t size) const {
     std::ofstream output_file{outputName, std::ios::binary};
     if (!output_file.is_open()) throw std::runtime_error("Could not open output file.");
 
-    output_file.write(bytes, size);
+    output_file.write(bytes, size - 1);
   };
 }
 
