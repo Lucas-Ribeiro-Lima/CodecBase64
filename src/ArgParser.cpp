@@ -9,6 +9,8 @@
 #define USAGE_MESSAGE \
 "Usage: [mode] [options] [encoder/decoder] [input file] [output file]" "\n" \
 "e.g. codex --decode base64 input_file.txt output_file.jpg" "\n" \
+"Utilitary:" \
+"    -h/--help Display this message" \
 "Modes: " "\n" \
 "    -e/--encode   Codify the bytes with the specified encoding algorithm" "\n" \
 "    -d/--decode Decodify the file with the specified encoding algorithm."  "\n" \
@@ -65,6 +67,12 @@ static std::unordered_map<char, unsigned char> options_map{
 
 ArgParser::ArgParser(int argc, char* argv[])
 {
+    if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
+      std::cout << USAGE_MESSAGE << std::endl;
+      exit(0);
+    }
+
+
     if (argc < ARGV_MIN_COUNT)
     {
         std::cout
